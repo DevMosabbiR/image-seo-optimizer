@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Image SEO & Metadata Optimizer — Dev.MosabbiR</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0b0f19;
+            --card-bg: #111827;
+            --card-border: #1f293d;
+            --primary: #4f46e5;
+            --accent: #06b6d4;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --input-bg: #1e293b;
+            --input-border: #334155;
+            --success: #10b981;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: var(--bg); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 30px 16px; }
+        .header { text-align: center; max-width: 800px; margin-bottom: 24px; }
+        .designer-pill { display: inline-flex; align-items: center; gap: 6px; background: rgba(79, 70, 229, 0.2); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.35); padding: 5px 16px; border-radius: 9999px; font-size: 0.82rem; font-weight: 600; margin-bottom: 12px; }
+        .designer-pill span { color: var(--accent); }
+        h1 { font-size: 2.1rem; font-weight: 700; background: linear-gradient(135deg, #ffffff 0%, #94a3b8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+        .subtitle { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
+        .container { width: 100%; max-width: 1080px; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        @media (max-width: 860px) { .container { grid-template-columns: 1fr; } }
+        .card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 24px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4); }
+        .card-header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .card-title { font-size: 1.15rem; font-weight: 600; display: flex; align-items: center; gap: 8px; color: #e2e8f0; }
+        .btn-reset { background: transparent; border: 1px solid var(--input-border); color: var(--text-muted); font-size: 0.75rem; padding: 4px 10px; border-radius: 6px; cursor: pointer; transition: all 0.2s; }
+        .btn-reset:hover { color: #fff; border-color: var(--primary); }
+        .dropzone { border: 2px dashed var(--input-border); border-radius: 12px; padding: 26px 16px; text-align: center; cursor: pointer; transition: all 0.2s ease; background: rgba(30, 41, 59, 0.4); margin-bottom: 16px; }
+        .dropzone:hover { border-color: var(--primary); background: rgba(79, 70, 229, 0.1); }
+        .dropzone svg { width: 38px; height: 38px; stroke: var(--accent); margin-bottom: 8px; }
+        .preview-img { max-width: 100%; max-height: 230px; border-radius: 8px; object-fit: contain; display: none; margin-top: 10px; border: 1px solid var(--input-border); }
+        .form-group { margin-bottom: 14px; }
+        label { display: block; font-size: 0.84rem; font-weight: 500; color: #cbd5e1; margin-bottom: 5px; }
+        .hint { font-size: 0.73rem; color: var(--text-muted); margin-top: 4px; }
+        input[type="text"], textarea, select { width: 100%; background: var(--input-bg); border: 1px solid var(--input-border); border-radius: 8px; padding: 9px 12px; color: var(--text-main); font-size: 0.88rem; transition: border-color 0.2s; }
+        input[type="text"]:focus, textarea:focus, select:focus { outline: none; border-color: var(--primary); }
+        textarea { resize: vertical; min-height: 58px; }
+        .chips-container { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+        .chip { background: rgba(30, 41, 59, 0.8); border: 1px solid var(--input-border); color: #94a3b8; padding: 3px 8px; border-radius: 12px; font-size: 0.72rem; cursor: pointer; transition: all 0.15s; }
+        .chip:hover { color: #38bdf8; border-color: #38bdf8; background: rgba(56, 189, 248, 0.1); }
+        .slider-container { display: flex; align-items: center; gap: 12px; }
+        input[type="range"] { flex-grow: 1; accent-color: var(--accent); }
+        .slider-val { font-size: 0.85rem; font-weight: 600; color: var(--accent); width: 45px; text-align: right; }
+        .btn { display: inline-flex; align-items: center; justify-content: center; width: 100%; background: linear-gradient(135deg, var(--primary) 0%, #6366f1 100%); color: white; font-weight: 600; padding: 12px 18px; border-radius: 8px; border: none; cursor: pointer; transition: all 0.2s; gap: 8px; font-size: 0.95rem; }
+        .btn:hover { opacity: 0.95; transform: translateY(-1px); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .btn-success { background: linear-gradient(135deg, #059669 0%, #10b981 100%); margin-top: 14px; text-decoration: none; }
+        .code-box { background: #090d16; border: 1px solid var(--input-border); border-radius: 8px; padding: 10px; font-family: monospace; font-size: 0.76rem; color: #a5f3fc; overflow-x: auto; position: relative; margin-top: 6px; white-space: pre-wrap; word-break: break-all; }
+        .copy-btn { position: absolute; top: 6px; right: 6px; background: #1e293b; color: #cbd5e1; border: 1px solid #475569; border-radius: 4px; padding: 2px 7px; font-size: 0.7rem; cursor: pointer; }
+        .copy-btn:hover { background: #334155; color: white; }
+        .badge-pill { display: inline-flex; align-items: center; gap: 4px; background: rgba(16, 185, 129, 0.15); color: #34d399; padding: 3px 8px; border-radius: 6px; font-size: 0.74rem; font-weight: 600; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="designer-pill">
+            👨‍🎨 Designed for <span>Dev.MosabbiR</span> | UX & Product Designer
+        </div>
+        <h1>Image SEO & Metadata Optimizer</h1>
+        <p class="subtitle">AI ইমেজ থেকে সিগনেচার মুছে দিয়ে আপনার ব্র্যান্ড মেটাডাটা (Dev.MosabbiR) যুক্ত করুন এবং গুগল সার্চ ও লিঙ্কডইনের জন্য অপটিমাইজ করুন।</p>
+    </div>
+
+    <div class="container">
+        <!-- Input Form -->
+        <div class="card">
+            <div class="card-header-flex">
+                <div class="card-title"><span>📁</span> ১. ইমেজ ও বিস্তারিত তথ্য</div>
+                <button type="button" class="btn-reset" onclick="resetDefaults()">↺ ডিফল্ট রিস্টোর</button>
+            </div>
+
+            <div class="dropzone" id="dropzone" onclick="document.getElementById('fileInput').click()">
+                <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                </svg>
+                <div style="font-weight:600; margin-bottom:2px;">ছবি ড্রপ করুন অথবা ব্রাউজ করুন</div>
+                <div class="hint">JPG, PNG, বা WEBP (ChatGPT / DALL-E ইমেজ)</div>
+                <input type="file" id="fileInput" accept="image/*" style="display:none;" onchange="handleFile(this.files[0])">
+                <img id="preview" class="preview-img" alt="Preview">
+            </div>
+
+            <div class="form-group">
+                <label>লেখক / ডিজাইনার (Artist / Author / Creator)</label>
+                <input type="text" id="author" value="Dev.MosabbiR (Md Mosabbir Hossain)">
+                <div class="hint">গুগল ও উইন্ডোজ মেটাডাটায় আপনার নাম ও ব্র্যান্ড শো করবে।</div>
+            </div>
+
+            <div class="form-group">
+                <label>ইমেজ শিরোনাম (Image Title / XPTitle)</label>
+                <input type="text" id="title" value="Modern Digital Product UI Design by Dev.MosabbiR" oninput="autoSlug()">
+                <div class="hint">প্রয়োজনে নিজের প্রজেক্টের নাম যোগ করুন বা এডিট করুন।</div>
+            </div>
+
+            <div class="form-group">
+                <label>বিবরণ / Alt Text (Description)</label>
+                <textarea id="description">Modern UI/UX and digital product design crafted by Dev.MosabbiR, UX & Product Designer. Clean user experience, user-centric interface, and modern visual design system.</textarea>
+                <div class="hint">প্রজেক্ট অনুযায়ী বিস্তারিত শব্দ যোগ করতে পারেন।</div>
+            </div>
+
+            <div class="form-group">
+                <label>ট্যাগ / কি-ওয়ার্ডস (Keywords / XPKeywords)</label>
+                <input type="text" id="keywords" value="Dev.MosabbiR, UX Designer, Product Designer, UI UX Design, UI Verse, Figma, Design System, Digital Product, Mobile App UI, Web Dashboard, Interface Design">
+                <div class="chips-container">
+                    <span class="chip" onclick="addTag('SaaS Dashboard')">+ SaaS Dashboard</span>
+                    <span class="chip" onclick="addTag('Mobile App')">+ Mobile App</span>
+                    <span class="chip" onclick="addTag('Fintech')">+ Fintech</span>
+                    <span class="chip" onclick="addTag('Dark Mode')">+ Dark Mode</span>
+                    <span class="chip" onclick="addTag('Wireframe')">+ Wireframe</span>
+                    <span class="chip" onclick="addTag('Landing Page')">+ Landing Page</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>ক্যামেরা প্রোফাইল (Camera Simulation)</label>
+                <select id="cameraProfile">
+                    <option value="photoshop" selected>Adobe Photoshop 2025 (Edited)</option>
+                    <option value="sony">Sony A7 IV + FE 24-70mm GM</option>
+                    <option value="canon">Canon EOS R5 + RF 50mm F1.2</option>
+                    <option value="apple">Apple iPhone 15 Pro Max</option>
+                    <option value="none">কোনো ক্যামেরা প্রোফাইল নয়</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>অ্যান্টি-AI ন্যাচারালাইজার (Micro Film Grain)</label>
+                <div class="slider-container">
+                    <input type="range" id="grain" min="0" max="6" step="0.5" value="2.5" oninput="document.getElementById('grainVal').innerText = this.value + '%'">
+                    <span class="slider-val" id="grainVal">2.5%</span>
+                </div>
+                <div class="hint">হালকা টেক্সচার AI-এর অতিরিক্ত স্মুথনেস ভেঙে রিয়েল লুক দেয়।</div>
+            </div>
+
+            <div class="form-group">
+                <label>SEO ফাইল নেম (Optimized Filename)</label>
+                <input type="text" id="filename" value="modern-digital-product-ui-design-dev-mosabbir.jpg">
+            </div>
+
+            <button class="btn" id="processBtn" onclick="processClientSide()" disabled>
+                <span>⚡</span> প্রসেস এবং মেটাডাটা যুক্ত করুন
+            </button>
+        </div>
+
+        <!-- Output Card -->
+        <div class="card">
+            <div class="card-title"><span>✨</span> ২. অপটিমাইজড রেজাল্ট</div>
+
+            <div id="statusPlaceholder" style="text-align: center; padding: 60px 0; color: var(--text-muted);">
+                বামপাশে ছবি ড্রপ করে প্রসেস বাটনে ক্লিক করুন।
+            </div>
+
+            <div id="resultContent" style="display:none;">
+                <div style="margin-bottom: 14px; display: flex; gap: 8px; flex-wrap: wrap;">
+                    <span class="badge-pill">✓ AI সিগনেচার অপসারিত</span>
+                    <span class="badge-pill">✓ Dev.MosabbiR মেটাডাটা যুক্ত</span>
+                    <span class="badge-pill">✓ ন্যাচারাল গ্রেইন ফিল্টার</span>
+                </div>
+
+                <div style="text-align: center; margin-bottom: 16px;">
+                    <img id="resultImg" class="preview-img" style="display:inline-block; max-height: 250px;" alt="Result">
+                </div>
+
+                <a id="downloadLink" class="btn btn-success" download="optimized.jpg">
+                    <span>⬇️</span> অপটিমাইজড ইমেজ ডাউনলোড করুন
+                </a>
+
+                <div style="margin-top: 22px;">
+                    <label>🌐 গুগল ইমেজ SEO-র জন্য HTML Tag (Alt & Title সহ):</label>
+                    <div class="code-box" id="htmlSnippet">
+                        <button class="copy-btn" onclick="copyText('htmlSnippet')">Copy</button>
+                        <span></span>
+                    </div>
+                </div>
+
+                <div style="margin-top: 14px;">
+                    <label>📑 Schema.org ImageObject (গুগল ইনডেক্সিংয়ের জন্য JSON-LD):</label>
+                    <div class="code-box" id="schemaSnippet">
+                        <button class="copy-btn" onclick="copyText('schemaSnippet')">Copy</button>
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden canvas for processing -->
+    <canvas id="procCanvas" style="display:none;"></canvas>
+
+    <script>
+        let loadedImg = null;
+
+        const DEFAULTS = {
+            author: "Dev.MosabbiR (Md Mosabbir Hossain)",
+            title: "Modern Digital Product UI Design by Dev.MosabbiR",
+            description: "Modern UI/UX and digital product design crafted by Dev.MosabbiR, UX & Product Designer. Clean user experience, user-centric interface, and modern visual design system.",
+            keywords: "Dev.MosabbiR, UX Designer, Product Designer, UI UX Design, UI Verse, Figma, Design System, Digital Product, Mobile App UI, Web Dashboard, Interface Design",
+            camera: "photoshop",
+            grain: 2.5,
+            filename: "modern-digital-product-ui-design-dev-mosabbir.jpg"
+        };
+
+        function resetDefaults() {
+            document.getElementById('author').value = DEFAULTS.author;
+            document.getElementById('title').value = DEFAULTS.title;
+            document.getElementById('description').value = DEFAULTS.description;
+            document.getElementById('keywords').value = DEFAULTS.keywords;
+            document.getElementById('cameraProfile').value = DEFAULTS.camera;
+            document.getElementById('grain').value = DEFAULTS.grain;
+            document.getElementById('grainVal').innerText = DEFAULTS.grain + '%';
+            document.getElementById('filename').value = DEFAULTS.filename;
+        }
+
+        function addTag(tag) {
+            const kwInput = document.getElementById('keywords');
+            const current = kwInput.value.split(',').map(s => s.trim()).filter(Boolean);
+            if (!current.includes(tag)) {
+                current.push(tag);
+                kwInput.value = current.join(', ');
+            }
+        }
+
+        function autoSlug() {
+            const title = document.getElementById('title').value;
+            const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+            if (slug) document.getElementById('filename').value = slug + '.jpg';
+        }
+
+        function handleFile(file) {
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    loadedImg = img;
+                    const preview = document.getElementById('preview');
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    document.getElementById('processBtn').disabled = false;
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        const dropzone = document.getElementById('dropzone');
+        dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.style.borderColor = '#4f46e5'; });
+        dropzone.addEventListener('dragleave', () => { dropzone.style.borderColor = '#334155'; });
+        dropzone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropzone.style.borderColor = '#334155';
+            if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                handleFile(e.dataTransfer.files[0]);
+            }
+        });
+
+        // Binary EXIF builder in pure JavaScript
+        function buildExifAPP1(options) {
+            const entries = [];
+
+            function encodeAscii(str) {
+                const arr = new Uint8Array(str.length + 1);
+                for (let i = 0; i < str.length; i++) arr[i] = str.charCodeAt(i) & 0x7F;
+                arr[str.length] = 0;
+                return arr;
+            }
+
+            function encodeUtf16LE(str) {
+                const arr = new Uint8Array((str.length + 1) * 2);
+                for (let i = 0; i < str.length; i++) {
+                    const code = str.charCodeAt(i);
+                    arr[i * 2] = code & 0xFF;
+                    arr[i * 2 + 1] = (code >> 8) & 0xFF;
+                }
+                arr[str.length * 2] = 0;
+                arr[str.length * 2 + 1] = 0;
+                return arr;
+            }
+
+            if (options.make) entries.push({ tag: 0x010F, type: 2, raw: encodeAscii(options.make) });
+            if (options.model) entries.push({ tag: 0x0110, type: 2, raw: encodeAscii(options.model) });
+            if (options.software) entries.push({ tag: 0x0131, type: 2, raw: encodeAscii(options.software) });
+            if (options.title) {
+                entries.push({ tag: 0x010E, type: 2, raw: encodeAscii(options.title) });
+                entries.push({ tag: 0x9C9B, type: 1, raw: encodeUtf16LE(options.title) });
+            }
+            if (options.author) {
+                entries.push({ tag: 0x013B, type: 2, raw: encodeAscii(options.author) });
+                entries.push({ tag: 0x9C9D, type: 1, raw: encodeUtf16LE(options.author) });
+                entries.push({ tag: 0x8298, type: 2, raw: encodeAscii('Copyright (c) 2026 ' + options.author + '. All rights reserved.') });
+            }
+            if (options.description) {
+                entries.push({ tag: 0x9C9C, type: 1, raw: encodeUtf16LE(options.description) });
+                entries.push({ tag: 0x9C9F, type: 1, raw: encodeUtf16LE(options.description) });
+            }
+            if (options.keywords) {
+                const cleanKw = options.keywords.split(',').map(s => s.trim()).filter(Boolean).join('; ');
+                entries.push({ tag: 0x9C9E, type: 1, raw: encodeUtf16LE(cleanKw) });
+            }
+
+            entries.sort((a, b) => a.tag - b.tag);
+
+            const numEntries = entries.length;
+            const ifd0HeaderLen = 2 + numEntries * 12 + 4;
+            const dataOffset = 8 + ifd0HeaderLen;
+
+            let totalDataLen = 0;
+            entries.forEach(e => {
+                if (e.raw.length > 4) totalDataLen += e.raw.length;
+            });
+
+            const tiffLen = 8 + ifd0HeaderLen + totalDataLen;
+            const tiffBuf = new Uint8Array(tiffLen);
+            const view = new DataView(tiffBuf.buffer);
+
+            // TIFF header: 'II', 0x002A, offset 8
+            tiffBuf[0] = 0x49; tiffBuf[1] = 0x49;
+            view.setUint16(2, 0x002A, true);
+            view.setUint32(4, 0x00000008, true);
+
+            // IFD0 count
+            view.setUint16(8, numEntries, true);
+
+            let ifdPos = 10;
+            let currDataOffset = dataOffset;
+
+            entries.forEach(e => {
+                view.setUint16(ifdPos, e.tag, true);
+                view.setUint16(ifdPos + 2, e.type, true);
+                view.setUint32(ifdPos + 4, e.raw.length, true);
+
+                if (e.raw.length <= 4) {
+                    for (let i = 0; i < e.raw.length; i++) {
+                        tiffBuf[ifdPos + 8 + i] = e.raw[i];
+                    }
+                } else {
+                    view.setUint32(ifdPos + 8, currDataOffset, true);
+                    tiffBuf.set(e.raw, currDataOffset);
+                    currDataOffset += e.raw.length;
+                }
+                ifdPos += 12;
+            });
+
+            view.setUint32(ifdPos, 0, true);
+
+            // APP1 Segment
+            const app1Len = 2 + 6 + tiffLen;
+            const app1Buf = new Uint8Array(2 + app1Len);
+            const app1View = new DataView(app1Buf.buffer);
+
+            app1Buf[0] = 0xFF;
+            app1Buf[1] = 0xE1;
+            app1View.setUint16(2, app1Len, false);
+
+            const id = [0x45, 0x78, 0x69, 0x66, 0x00, 0x00];
+            for (let i = 0; i < 6; i++) app1Buf[4 + i] = id[i];
+
+            app1Buf.set(tiffBuf, 10);
+            return app1Buf;
+        }
+
+        function processClientSide() {
+            if (!loadedImg) return;
+            const btn = document.getElementById('processBtn');
+            btn.disabled = true;
+            btn.innerText = 'প্রসেস হচ্ছে...';
+
+            setTimeout(() => {
+                try {
+                    const canvas = document.getElementById('procCanvas');
+                    canvas.width = loadedImg.width;
+                    canvas.height = loadedImg.height;
+                    const ctx = canvas.getContext('2d');
+
+                    ctx.drawImage(loadedImg, 0, 0);
+
+                    const grainPct = parseFloat(document.getElementById('grain').value);
+                    if (grainPct > 0) {
+                        const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                        const d = imgData.data;
+                        const strength = grainPct * 2.2;
+                        for (let i = 0; i < d.length; i += 4) {
+                            const noise = (Math.random() - 0.5) * strength;
+                            d[i] = Math.min(255, Math.max(0, d[i] + noise));
+                            d[i + 1] = Math.min(255, Math.max(0, d[i + 1] + noise));
+                            d[i + 2] = Math.min(255, Math.max(0, d[i + 2] + noise));
+                        }
+                        ctx.putImageData(imgData, 0, 0);
+                    }
+
+                    canvas.toBlob((blob) => {
+                        const reader = new FileReader();
+                        reader.onloadend = function() {
+                            const rawBytes = new Uint8Array(reader.result);
+
+                            let make = '', model = '', software = '';
+                            const cam = document.getElementById('cameraProfile').value;
+                            if (cam === 'sony') {
+                                make = 'Sony'; model = 'ILCE-7M4'; software = 'ILCE-7M4 v2.00';
+                            } else if (cam === 'canon') {
+                                make = 'Canon'; model = 'Canon EOS R5'; software = 'Firmware Version 1.8.1';
+                            } else if (cam === 'apple') {
+                                make = 'Apple'; model = 'iPhone 15 Pro Max'; software = 'iOS 18.0';
+                            } else if (cam === 'photoshop') {
+                                software = 'Adobe Photoshop 2025 (Windows)';
+                            }
+
+                            const title = document.getElementById('title').value;
+                            const description = document.getElementById('description').value;
+                            const author = document.getElementById('author').value;
+                            const keywords = document.getElementById('keywords').value;
+                            const filename = document.getElementById('filename').value || 'optimized-image.jpg';
+
+                            const app1Seg = buildExifAPP1({
+                                title, description, author, keywords, make, model, software
+                            });
+
+                            let offset = 2;
+                            while (offset < rawBytes.length && rawBytes[offset] === 0xFF && (rawBytes[offset+1] >= 0xE0 && rawBytes[offset+1] <= 0xEF)) {
+                                const len = (rawBytes[offset+2] << 8) | rawBytes[offset+3];
+                                offset += 2 + len;
+                            }
+
+                            const finalBytes = new Uint8Array(2 + app1Seg.length + (rawBytes.length - offset));
+                            finalBytes[0] = 0xFF; finalBytes[1] = 0xD8;
+                            finalBytes.set(app1Seg, 2);
+                            finalBytes.set(rawBytes.subarray(offset), 2 + app1Seg.length);
+
+                            const finalBlob = new Blob([finalBytes], { type: 'image/jpeg' });
+                            const url = URL.createObjectURL(finalBlob);
+
+                            document.getElementById('statusPlaceholder').style.display = 'none';
+                            document.getElementById('resultContent').style.display = 'block';
+
+                            const resultImg = document.getElementById('resultImg');
+                            resultImg.src = url;
+
+                            const dl = document.getElementById('downloadLink');
+                            dl.href = url;
+                            dl.download = filename;
+
+                            document.querySelector('#htmlSnippet span').innerText = 
+                                `<img src="${filename}" alt="${description || title}" title="${title}" loading="lazy" />`;
+
+                            const schemaObj = {
+                                "@context": "https://schema.org/",
+                                "@type": "ImageObject",
+                                "name": title,
+                                "description": description || title,
+                                "author": { "@type": "Person", "name": author },
+                                "contentUrl": filename,
+                                "keywords": keywords
+                            };
+                            document.querySelector('#schemaSnippet span').innerText = JSON.stringify(schemaObj, null, 2);
+
+                            btn.disabled = false;
+                            btn.innerHTML = '<span>⚡</span> প্রসেস এবং মেটাডাটা যুক্ত করুন';
+                        };
+                        reader.readAsArrayBuffer(blob);
+                    }, 'image/jpeg', 0.95);
+
+                } catch (e) {
+                    alert('Error: ' + e.message);
+                    btn.disabled = false;
+                    btn.innerHTML = '<span>⚡</span> প্রসেস এবং মেটাডাটা যুক্ত করুন';
+                }
+            }, 50);
+        }
+
+        function copyText(id) {
+            const text = document.querySelector('#' + id + ' span').innerText;
+            navigator.clipboard.writeText(text).then(() => alert('Copied to clipboard!'));
+        }
+    </script>
+</body>
+</html>
